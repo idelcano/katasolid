@@ -1,4 +1,5 @@
 import { GildedRoseInventoryRepository } from "./data/repositories/GildedRoseInventoryRepository";
+import { GildedRoseItemsProviderRepository } from "./data/repositories/GildedRoseItemsProviderRepository";
 import { UpdateInventoryUseCase } from "./domain/usecases/UpdateInventoryUseCase";
 
 /*
@@ -51,55 +52,31 @@ export class Item {
   }
 }
 
-//persistency
-export class ItemInMemoryProvider {
-  constructor(private items: Item[]) {}
-  get(): Item[] {
-    return this.items;
-  }
-}
-
-export class GildedRose {
-  constructor(private itemProvider: ItemInMemoryProvider) {}
-
-  updateQuality(): Item[] {
-    //map
-    const items = this.itemProvider.get();
-    return items;
-  }
-}
-
-function getCompositionRoot() {
+export function getCompositionRoot(items: Item[]) {
   const inventoryRepository = new GildedRoseInventoryRepository();
+  const itemsProviderRepository = new GildedRoseItemsProviderRepository(items);
   return {
-    updateQualityItems: new UpdateInventoryUseCase(inventoryRepository),
+    updateQualityItems: new UpdateInventoryUseCase(inventoryRepository, itemsProviderRepository),
   };
 }
-const items = compositionRoot.updateQualityItems(items);
 
-function main();
+function main() {
+  
+  const items: Item[] = [
+    new Item("+5 Dexterity Vest", 10, 20),
+    new Item("Aged Brie", 2, 0),
+    new Item("Elixir of the Mongoose", 5, 7),
+    new Item("Sulfuras, Hand of Ragnaros", 0, 80),
+    new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
+    new Item("Conjured Mana Cake", 3, 6),
+  ];
+  
+  const compositionRoot=getCompositionRoot(items);
+  const updatedItems=compositionRoot.updateQualityItems.execute();
+  printItems(updatedItems);
+}
 
-const items: Item[] = [
-  new Item("+5 Dexterity Vest", 10, 20),
-  new Item("Aged Brie", 2, 0),
-  new Item("Elixir of the Mongoose", 5, 7),
-  new Item("Sulfuras, Hand of Ragnaros", 0, 80),
-  new Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-  new Item("Conjured Mana Cake", 3, 6),
-];
-
-compositionRoot.saveItems(items);
-const savedItems = compositionRoot.getItems();
-{
-  const items = compositionRoot.updateQualityItems(items);
-  const itemProvider = new ItemInMemoryProvider([
-    new Item("+5 DexteitemszCake", 3, 6),
-  ]);
-
-  const gridedRose = new GildedRose(itemProvider);
-
-  const items = gridedRose.updateQuality();
-
+function printItems(items:Item[]) {
   console.log(items.map((item) => item.toString()).join("\n"));
 }
 

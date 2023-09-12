@@ -1,11 +1,75 @@
 import { Item } from "./GildedRoseKata";
 
-interface ItemQualityType {
-  getNewQuality(item: Item): number;
+interface ItemType {
+  readonly key: string;
+  getQuality(item: Item): number;
+  getSellIn(item: Item): number;
 }
 
-interface ItemSellInType {
-  getNewSellIn(item: Item): number;
+class CommonItem implements ItemType {
+  readonly key: string = "common";
+  getQuality(item: Item): number {
+    const quality = degrade(item.quality, item.sellIn);
+    return quality;
+  }
+  getSellIn(item: Item): number {
+    const sellIn = decreaseSellIn(item.sellIn);
+    return sellIn;
+  }
+}
+
+class ConjuredItem implements ItemType {
+  readonly key: string = "Conjured";
+  getQuality(item: Item): number {
+    const quality = degrade(item.quality, item.sellIn);
+    return quality;
+  }
+  getSellIn(item: Item): number {
+    const sellIn = decreaseSellIn(item.sellIn);
+    return sellIn;
+  }
+}
+
+class SulfurasItem implements ItemType {
+  readonly key: string = "Sulfuras, Hand of Ragnaros";
+  getQuality(item: Item): number {
+    return item.quality
+  }
+  getSellIn(item: Item):number { return item.sellIn;}
+}
+
+class AgedBrieItem implements ItemType {
+  readonly key: string = "Aged Brie";
+  getQuality(item: Item): number {
+    const quality = increaseOlder(item.quality, item.sellIn);
+    return quality;
+  }
+  getSellIn(item: Item): number {
+    return decreaseSellIn(item.sellIn);
+  }
+}
+
+class BackstagePassItem implements ItemType {
+  readonly key: string = "Backstage passes to a TAFKAL80ETC concert";
+  getQuality(Item): number {
+    return Item.quality + 1;
+  }
+  getSellIn(item: Item): number {
+    return decreaseSellIn(item.sellIn);
+  }
+}
+
+export function getItemType(name: string): ItemType {
+  const itemTypes = [
+    new SulfurasItem(),
+    new AgedBrieItem(),
+    new BackstagePassItem(),
+  ];
+  const itemType = itemTypes.find((itemtype) => itemtype.key == name);
+  if (!itemType) {
+    return new CommonItem();
+  }
+  return itemType;
 }
 
 function decreaseSellIn(sellIn: number) {
@@ -53,74 +117,4 @@ function degradeTwice(quality: number, sellIn: number) {
     quality = 0;
   }
   return quality;
-}
-
-class ItemType {
-  readonly key: string;
-}
-
-function getItemType(item: Item): ItemType | ItemSellInType {
-  const itemTypes = [
-    new SulfurasItem(),
-    new AgedBrieItem(),
-    new BackstagePassItem(),
-  ];
-  const itemType = itemTypes.find((itemtype) => itemtype.key == item.name);
-  if (!itemType) {
-    return new CommonItem();
-  }
-  return itemType;
-}
-
-class CommonItem implements ItemType {
-  readonly key: string = "common";
-  getNewQuality(item: Item): number {
-    const quality = degrade(item.quality, item.sellIn);
-    return quality;
-  }
-  getNewSellIn(item: Item): number {
-    const sellIn = decreaseSellIn(item.sellIn);
-    return sellIn;
-  }
-}
-
-class ConjuredItem implements ItemType {
-  readonly key: string = "Conjured";
-  getNewQuality(item: Item): number {
-    const quality = degrade(item.quality, item.sellIn);
-    return quality;
-  }
-  getNewSellIn(item: Item): number {
-    const sellIn = decreaseSellIn(item.sellIn);
-    return sellIn;
-  }
-}
-
-class SulfurasItem implements ItemQualityType {
-  readonly key: string = "Sulfuras, Hand of Ragnaros";
-  getNewQuality(item: Item): number {
-    const quality = increaseQuality(item.quality, item.sellIn);
-    return quality;
-  }
-}
-
-class AgedBrieItem implements ItemType {
-  readonly key: string = "Aged Brie";
-  getNewQuality(item: Item): number {
-    const quality = increaseOlder(item.quality, item.sellIn);
-    return quality;
-  }
-  getNewSellIn(item: Item): number {
-    return decreaseSellIn(item.sellIn);
-  }
-}
-
-class BackstagePassItem implements ItemType {
-  readonly key: string = "Backstage passes to a TAFKAL80ETC concert";
-  getNewQuality(Item): number {
-    return Item.quality + 1;
-  }
-  getNewSellIn(item: Item): number {
-    return decreaseSellIn(item.sellIn);
-  }
 }

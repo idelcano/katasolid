@@ -1,3 +1,4 @@
+import { getItemType } from "@/ItemTypes";
 import { Item } from "../../GildedRoseKata";
 import { InventoryRepository } from "../../domain/repositories/InventoryRepository";
 
@@ -12,8 +13,10 @@ export class GildedRoseInventoryRepository implements InventoryRepository {
   }
 
   private getItemQuality(item: Item) {
-    getItemType(item).get;
+    getItemType(item.name).getQuality(item);
   }
 
-  private getItemSellIn(item: Item) {}
+  private getItemSellIn(item: Item) {
+    getItemType(item.name).getSellIn(item);
+  }
 }
