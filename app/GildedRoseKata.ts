@@ -65,6 +65,7 @@ export class GildedRose {
   updateQuality(): Item[] {
     //map
     const items = this.itemProvider.get();
+    return items;
   }
 }
 

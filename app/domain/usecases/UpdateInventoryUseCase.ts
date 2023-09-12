@@ -4,6 +4,6 @@ import { InventoryRepository } from "../repositories/InventoryRepository";
 export class UpdateInventoryUseCase {
   constructor(private inventoryRepository: InventoryRepository) {}
   execute(items: Item[]): Item[] {
-    this.inventoryRepository.updateInventory(items);
+    return this.inventoryRepository.updateInventory(items);
   }
 }

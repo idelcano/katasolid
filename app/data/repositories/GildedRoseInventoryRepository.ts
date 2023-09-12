@@ -8,11 +8,12 @@ export class GildedRoseInventoryRepository implements InventoryRepository {
       quality: this.getItemQuality(item),
       sellIn: this.getItemSellIn(item),
     }));
+    return items;
   }
 
-  private getItemQuality(item:Item) {
-    getItemType(item).
+  private getItemQuality(item: Item) {
+    getItemType(item).get;
   }
 
-  private getItemSellIn(item:Item) {}
+  private getItemSellIn(item: Item) {}
 }
